@@ -38,7 +38,7 @@ React 19 + TypeScript + Vite. Dexie (IndexedDB), Fetch API, Lucide, Recharts. Ve
 
 
 ## v1.1.0 승인된 작업: 초보자용 API 키 설정 안내
-- 사용자 승인: 사용자 제공 subtitle-localizer-v1.8.0-full.zip의 가이드 화면 구조를 참고하여 YouTube Radar 전용 7단계 API 키 안내를 추가.
+- 사용자 승인: 사용자 승인에 따라 YouTube Radar 전용 7단계 API 키 안내를 추가.
 - /api-guide 독립 페이지(상단 개요, sticky 목차, Google Cloud 직접 링크, 7단계, 복사, 체크리스트, FAQ, 오류 해결, 키 보안).
 - 기존 설정·API 미연결 배너·사이드바에서 가이드로 이동하고 설정으로 복귀.
 - YouTube Radar는 타 채널 공개 정보 분석만 하므로 OAuth Client/동의 화면/리디렉션 URI/클라이언트 보안키 만들기 안내는 절대 넣지 않음.
