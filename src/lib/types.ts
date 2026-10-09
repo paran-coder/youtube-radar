@@ -17,4 +17,4 @@ export interface Competitor { id: string; ownerId: string; channelId: string; ad
 export interface AppSettings { id: string; rememberKey?: boolean; colorMode?: 'light' | 'dark'; }
 export interface Backup { app: 'youtube-radar'; schemaVersion: '1.0.0'; exportedAt: string; data: { channels: Channel[]; videos: Video[]; snapshots: Snapshot[]; owners: Owner[]; competitors: Competitor[]; settings: AppSettings[] } }
 export interface SearchCandidate { id: string; title: string; description: string; thumbnail: string; handle?: string; }
-export type Page = 'dashboard' | 'search' | 'channel' | 'owners' | 'discover' | 'compare' | 'library' | 'settings' | 'api-guide';
+export type Page = 'dashboard' | 'search' | 'channel' | 'owners' | 'discover' | 'compare' | 'library' | 'settings' | 'api-guide' | 'user-guide';

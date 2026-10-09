@@ -444,3 +444,13 @@ input::placeholder {color:#8b8588;}
 .discover-empty p{font-size:14px;color:#1d1d1d;margin:0 0 8px;font-weight:600}
 .discover-empty small,.discover-available-empty{font-size:13px;line-height:1.65;color:#696969}
 @media(max-width:760px){.discover-linked-row{flex-wrap:wrap;gap:10px}.discover-linked-detail{flex-basis:calc(100% - 60px)}.discover-linked-row select{flex:1;min-width:150px}.discover-linked-row .btn{flex:1;min-width:110px}.discover-linked-row .discover-unlink{flex:0 0 38px}}
+
+/* v1.4.0 · Make relationship-only removal distinct from destructive deletion. */
+.discover-unlink-text{border-color:#e6e0e3!important;color:#5e555c!important;font-size:12px!important;padding:8px 13px!important;min-height:39px!important}
+.discover-purge{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid #edceca;color:#9b3928;background:#fff9f7;border-radius:9px;min-height:40px;padding:8px 12px;font-size:12px;font-weight:700;white-space:nowrap;cursor:pointer}
+.discover-purge:hover,.discover-purge-mini:hover{background:#feeae5;color:#802a1c}
+.discover-saved-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.compact-channel .discover-saved-actions button{flex-shrink:0;display:grid;place-items:center;min-width:35px;min-height:36px;border-radius:9px;cursor:pointer}
+.compact-channel .discover-saved-actions .discover-purge-mini{background:#fff8f6;color:#943827;border:1px solid #efd2ca}
+@media(max-width:980px){.discover-linked-row{flex-wrap:wrap}.discover-linked-detail{flex-basis:calc(100% - 65px)}.discover-linked-row select{flex:1}.discover-purge{margin-left:auto}}
+@media(max-width:640px){.discover-linked-row select{width:100%;max-width:none}.discover-unlink-text,.discover-purge{flex:1}.discover-purge{margin:0}.discover-saved-actions{margin-left:auto}}

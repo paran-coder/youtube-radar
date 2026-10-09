@@ -88,3 +88,12 @@ Approved by user direction to stop repetitive review and implement. Scope: compe
 - 이 수정은 채널·영상·경쟁 관계를 삭제하지 않습니다.
 - QA 샘플이 기존 브라우저에 병합됐다면 샘플 채널은 사용자가 라이브러리에서 별도로 삭제해야 합니다.
 - 실제 브라우저/프로덕션 빌드 재검증은 아직 필요합니다.
+
+
+## v1.4.0 — 사용 가이드 및 데이터 삭제 UX
+- 기존 v1.3.2에서 출발하며 IndexedDB 스키마와 백업 버전 1.0.0을 유지합니다.
+- `/user-guide`로 별도의 실사용 가이드를 구현하며 API 키 발급 가이드는 `/api-guide`에 그대로 둡니다.
+- '경쟁 관계 해제'와 '채널 데이터 완전 삭제'를 별개의 액션으로 노출합니다.
+- 채널 완전 삭제는 channels/videos/snapshots/owners/competitors를 한 트랜잭션에서 삭제합니다.
+- 테스트 QA 채널은 자동 삭제하지 않으며 사용자의 명시적 삭제만 허용합니다.
+- 사용자별 API 키와 로컬 저장 모델을 변경하지 않습니다.

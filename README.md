@@ -1,4 +1,4 @@
-# YouTube Radar — youtube-radar-v1.3.2
+# YouTube Radar — youtube-radar-v1.4.0
 
 **사용자 개인 API 키 기반의 글로벌 YouTube 경쟁 채널 분석 웹앱**. React + TypeScript + Vite 기반이며, 서버 API·로그인·중앙 데이터베이스가 없습니다. 분석 결과는 개인 브라우저의 IndexedDB에 보관하고 JSON으로 백업합니다.
 
@@ -54,7 +54,7 @@ npm run smoke
 
 ## 배포 방법 (GitHub → Vercel)
 
-1. `youtube-radar-v1.0.2` 폴더의 소스 파일을 GitHub 저장소에 올립니다. **API 키, `.env`, 개인 JSON 백업 파일은 올리지 마세요.**
+1. `youtube-radar-v1.4.0` 폴더의 소스 파일을 GitHub 저장소에 올립니다. **API 키, `.env`, 개인 JSON 백업 파일은 올리지 마세요.**
 2. Vercel → Add New Project → 해당 GitHub 저장소를 선택합니다.
 3. Framework Preset: `Vite`, Build Command: `npm run build`, Output Directory: `dist`.
 4. 환경 변수로 API 키를 지정할 필요가 없습니다. 각 사용자가 브라우저에서 키를 입력합니다.
@@ -191,3 +191,11 @@ Global discovery and evidence-based competitive strategy features; no external A
 - 이 수정은 채널·영상·경쟁 관계를 삭제하지 않습니다.
 - QA 샘플이 기존 브라우저에 병합됐다면 샘플 채널은 사용자가 라이브러리에서 별도로 삭제해야 합니다.
 - 실제 브라우저/프로덕션 빌드 재검증은 아직 필요합니다.
+
+
+## v1.4.0 업데이트 범위
+- `/user-guide`: API 연결 이후 실제 사용 순서를 설명하는 가이드 페이지를 별도로 제공합니다.
+- `/api-guide`: 기존 Google Cloud API 키 발급 가이드 그대로 유지합니다.
+- 경쟁 탐색의 '연결하지 않은 저장 채널'에서 별도 완전 삭제를 지원합니다.
+- 완전 삭제 시 기존 소유 채널·다른 경쟁 관계·영상 이력에 미치는 영향을 경고합니다.
+- 기존 IndexedDB 데이터 및 JSON 백업 구조는 유지됩니다.

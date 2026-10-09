@@ -46,6 +46,29 @@ export async function saveChannelData(channel:Channel,videos:Video[]){
 }
 export async function addOwner(channelId:string){await db.transaction('rw',db.owners,async()=>{const existing=await db.owners.get(channelId);if(existing)return;const owners=await db.owners.toArray();await db.owners.put({channelId,addedAt:new Date().toISOString(),isPrimary:!owners.some(x=>x.isPrimary)});});}
 export async function primaryOwner(channelId:string){await db.transaction('rw',db.owners,async()=>{await db.owners.toCollection().modify({isPrimary:false});await db.owners.update(channelId,{isPrimary:true});});}
+/** Removes one saved channel and every relationship that references it, atomically.
+ * Does not affect unrelated channels. No implicit API calls.
+ */
+export async function deleteStoredChannel(channelId:string){
+ if(!channelId.trim())throw new Error('삭제할 채널이 지정되지 않았습니다.');
+ await db.transaction('rw',db.channels,db.videos,db.snapshots,db.owners,db.competitors,async()=>{
+  const videoIds=(await db.videos.where('channelId').equals(channelId).primaryKeys()) as string[];
+  const wasPrimary=(await db.owners.get(channelId))?.isPrimary;
+  await db.channels.delete(channelId);
+  await db.videos.where('channelId').equals(channelId).delete();
+  if(videoIds.length)await db.snapshots.where('videoId').anyOf(videoIds).delete();
+  await db.owners.delete(channelId);
+  await db.competitors.where('channelId').equals(channelId).delete();
+  await db.competitors.where('ownerId').equals(channelId).delete();
+  if(wasPrimary){
+   const rest=(await db.owners.toArray()).sort((a,b)=>a.addedAt.localeCompare(b.addedAt)||a.channelId.localeCompare(b.channelId));
+   if(rest.length){
+    await db.owners.toCollection().modify({isPrimary:false});
+    await db.owners.update(rest[0].channelId,{isPrimary:true});
+   }
+  }
+ });
+}
 export async function removeOwner(channelId:string){await db.transaction('rw',db.owners,db.competitors,async()=>{const was=await db.owners.get(channelId);await db.owners.delete(channelId);await db.competitors.where('ownerId').equals(channelId).delete();if(was?.isPrimary){const next=(await db.owners.toArray()).sort((a,b)=>a.addedAt.localeCompare(b.addedAt))[0];if(next)await db.owners.update(next.channelId,{isPrimary:true});}});}
 export async function addCompetitor(ownerId:string,channelId:string,role:CompetitorRole='direct'){if(ownerId===channelId)throw new Error('자신을 경쟁 채널로 추가할 수 없습니다.');const id=`${ownerId}:${channelId}`;const old=await db.competitors.get(id);await db.competitors.put({id,ownerId,channelId,addedAt:old?.addedAt??new Date().toISOString(),role});}
 export async function setCompetitorRole(ownerId:string,channelId:string,role:CompetitorRole){await db.competitors.update(`${ownerId}:${channelId}`,{role});}
