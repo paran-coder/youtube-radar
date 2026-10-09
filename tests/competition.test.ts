@@ -14,3 +14,20 @@ describe('경쟁 분석 로컬 계산',()=>{
  it('제목 제안은 주제를 입력해야 생성된다',()=>{expect(titleSuggestions(' ',[])).toEqual([]);expect(titleSuggestions('스마트폰 가격',[video('a','A',10)])).toHaveLength(3);});
  it('기존 저장된 경쟁 채널은 직접 경쟁으로 취급한다',()=>expect(roleLabel(undefined)).toBe('직접 경쟁'));
 });
+
+describe('v1.6.0 비교 근거 및 한계',()=>{
+ it('조회수 비공개 항목은 유효 표본에서 제외하고 경고한다',()=>{
+  const a=[{...video('missing','A',2),viewCount:null},video('ok','A',20)];
+  const b=[video('b','B',20)];
+  const stats=sampleStats(a);
+  expect(stats.count).toBe(2);
+  expect(stats.validCounts).toBe(1);
+  expect(stats.missingViews).toBe(1);
+  expect(comparisonWarnings(a,b).some(w=>w.includes('조회수를 제공하지 않는'))).toBe(true);
+ });
+ it('표본 기반이며 원인 단정 불가 안내를 유지한다',()=>{
+  const warnings=comparisonWarnings([video('a','A',1)],[video('b','B',2)]);
+  expect(warnings.some(w=>w.includes('전체 영상이나 유튜브 시장'))).toBe(true);
+  expect(warnings.some(w=>w.includes('썸네일 효과'))).toBe(true);
+ });
+});

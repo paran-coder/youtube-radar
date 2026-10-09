@@ -1,6 +1,6 @@
 {
   "name": "youtube-radar",
-  "version": "1.5.0",
+  "version": "1.6.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -12,7 +12,11 @@
     "smoke": "node scripts/smoke-test.cjs",
     "qa:primary": "node scripts/storage-primary-regression.cjs",
     "qa:delete": "node scripts/storage-deletion-regression.cjs",
-    "qa:dashboard": "node scripts/dashboard-ranking-regression.cjs"
+    "qa:dashboard": "node scripts/dashboard-ranking-regression.cjs",
+    "qa:backup": "node scripts/backup-integrity-regression.cjs",
+    "qa:onboarding": "node scripts/onboarding-brand-regression.cjs",
+    "qa:all": "npm run smoke && npm run qa:primary && npm run qa:delete && npm run qa:dashboard && npm run qa:backup && npm run qa:onboarding",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "dexie": "^4.2.0",
@@ -29,6 +33,7 @@
     "@vitejs/plugin-react": "^4.5.0",
     "typescript": "~5.8.3",
     "vite": "^6.2.0",
-    "vitest": "^3.2.0"
+    "vitest": "^3.2.0",
+    "@playwright/test": "^1.56.0"
   }
 }

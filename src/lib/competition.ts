@@ -27,18 +27,21 @@ export function sampleStats(videos: Video[]) {
     top3Share: total > 0 ? (sorted.slice(0, 3).reduce((a, b) => a + b, 0) / total) * 100 : null,
     newest: lastDate.length ? Math.max(...lastDate) : null,
     oldest: lastDate.length ? Math.min(...lastDate) : null,
+    missingViews: videos.length - counts.length,
   };
 }
 export function comparisonWarnings(a: Video[], b: Video[], ca?: Channel, cb?: Channel): string[] {
   const warnings: string[] = [];
   const A = sampleStats(a); const B = sampleStats(b);
   if (Math.min(a.length, b.length) === 0) warnings.push('한 채널에 비교 조건에 맞는 영상이 없습니다. 기간이나 영상 유형을 변경하세요.');
+  if (A.missingViews || B.missingViews) warnings.push('조회수를 제공하지 않는 영상이 있어 평균·중앙값 계산에서 제외했습니다.');
   else if (Math.min(a.length, b.length) < 5) warnings.push('비교 영상이 5개 미만인 채널이 있습니다. 통계적 일반화를 피하세요.');
   else if (Math.min(a.length, b.length) < 10) warnings.push('한 채널의 표본이 10개 미만입니다. 조회수 분포를 함께 보세요.');
   if (Math.min(a.length, b.length) > 0 && Math.max(a.length, b.length) >= Math.min(a.length, b.length) * 2) warnings.push('채널 간 수집 표본 수가 두 배 이상 차이납니다. 평균만으로 우열을 판단하지 마세요.');
   if (A.top3Share !== null && A.top3Share > 70 || B.top3Share !== null && B.top3Share > 70) warnings.push('상위 3개 영상에 조회수가 집중된 채널이 있습니다. 평균과 중앙값을 함께 확인하세요.');
   if (ca && cb && Math.abs(Date.parse(ca.fetchedAt) - Date.parse(cb.fetchedAt)) > 86400000) warnings.push('두 채널의 마지막 수집 시각이 24시간 넘게 차이납니다. 최신 데이터를 수동 갱신해 주세요.');
-  warnings.push('현재 조회수는 게시 후 누적값입니다. 같은 업로드 경과시간의 조회수가 아니며 클릭률·시청 지속시간도 알 수 없습니다.');
+  warnings.push('최근 영상 수집 표본만 비교합니다. 양쪽 채널의 전체 영상이나 유튜브 시장을 대표하지 않습니다.');
+  warnings.push('누적 조회수는 영상별 게시 후 경과시간이 달라 동일 시점 성과가 아닙니다. 클릭률·시청 지속시간·썸네일 효과는 공개 데이터로 판단할 수 없습니다.');
   return warnings;
 }
 export type TitlePatternId = 'question' | 'number' | 'compare' | 'guide' | 'warning';

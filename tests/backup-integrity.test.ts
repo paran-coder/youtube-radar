@@ -1,0 +1,21 @@
+import {describe,it,expect} from 'vitest';
+import {prepareBackupImport,type BackupData} from '../src/lib/backupIntegrity';
+import type {Channel,Video,Owner,Competitor,Snapshot} from '../src/lib/types';
+const now=Date.parse('2026-10-09T12:00:00Z');
+const dt=(days=0)=>new Date(now-days*86400000).toISOString();
+const channel=(id:string,days=0):Channel=>({id,title:id,description:'',thumbnail:'',subscriberCount:100,viewCount:100,videoCount:1,uploadsId:'u',topics:[],fetchedAt:dt(days)});
+const video=(id:string,channelId:string,days=0):Video=>({id,channelId,title:id,description:'',thumbnail:'',publishedAt:dt(10),durationSeconds:100,categoryId:'24',viewCount:100,likeCount:0,commentCount:0,fetchedAt:dt(days)});
+const owner=(channelId:string,isPrimary=false):Owner=>({channelId,isPrimary,addedAt:dt(2)});
+const comp=(o:string,c:string):Competitor=>({id:`${o}:${c}`,ownerId:o,channelId:c,addedAt:dt(1),role:'direct'});
+const snap=(id:string,videoId:string,days=0):Snapshot=>({id,videoId,collectedAt:dt(days),viewCount:10});
+const blank=():BackupData=>({channels:[],videos:[],snapshots:[],owners:[],competitors:[],settings:[]});
+
+describe('백업 무결성',()=>{
+ it('신규 참조가 없는 채널/영상/관계는 제외',()=>{const input=blank();input.channels=[channel('base')];input.videos=[video('good','base'),video('bad','absent')];input.snapshots=[snap('ok','good'),snap('orphan','bad')];input.owners=[owner('base',true),owner('absent')];input.competitors=[comp('base','absent')];const {data,report}=prepareBackupImport(input,blank(),'replace',now);expect(data.videos.map(v=>v.id)).toEqual(['good']);expect(data.snapshots).toHaveLength(1);expect(data.owners).toHaveLength(1);expect(data.competitors).toHaveLength(0);expect(report.skippedUnlinked).toBe(4);});
+ it('30일 초과 및 미래 날짜 데이터 제외',()=>{const input=blank();input.channels=[channel('old',35),channel('future',-2),channel('live')];input.videos=[video('oldVideo','live',31),video('liveVideo','live')];const {data,report}=prepareBackupImport(input,blank(),'replace',now);expect(data.channels.map(c=>c.id)).toEqual(['live']);expect(data.videos.map(v=>v.id)).toEqual(['liveVideo']);expect(report.skippedExpired).toBe(3);});
+ it('병합은 기존 신선 데이터와 대표 채널을 보존',()=>{const old=blank();old.channels=[channel('own'),channel('other')];old.owners=[owner('own',true)];old.videos=[video('v','own')];const input=blank();input.channels=[channel('own',2),channel('other',0),channel('third')];input.owners=[owner('third',true),owner('own',false)];input.videos=[video('v','own',3)];const {data,report}=prepareBackupImport(input,old,'merge',now);expect(data.owners.filter(o=>o.isPrimary).map(o=>o.channelId)).toEqual(['own']);expect(data.videos.find(v=>v.id==='v')?.fetchedAt).toBe(dt());expect(report.channelsAdded).toBe(1);expect(report.skippedOlder).toBe(2);});
+ it('중복 병합은 멱등이며 집계에 재삽입을 표시하지 않음',()=>{const input=blank();input.channels=[channel('base'),channel('other')];input.owners=[owner('base',true)];input.competitors=[comp('base','other')];const first=prepareBackupImport(input,blank(),'merge',now);const next=prepareBackupImport(input,first.data,'merge',now);expect(next.report.channelsAdded).toBe(0);expect(next.report.ownersAdded).toBe(0);expect(next.report.competitorsAdded).toBe(0);expect(next.data.competitors).toHaveLength(1);});
+ it('교체 모드는 기존 채널과 경쟁 관계를 남기지 않음',()=>{const old=blank();old.channels=[channel('old')];old.owners=[owner('old',true)];const incoming=blank();incoming.channels=[channel('new')];incoming.owners=[owner('new')];const {data}=prepareBackupImport(incoming,old,'replace',now);expect(data.channels.map(c=>c.id)).toEqual(['new']);expect(data.owners.map(o=>o.channelId)).toEqual(['new']);expect(data.owners[0].isPrimary).toBe(true);});
+ it('복원 중 키 보관 설정은 영구 저장하지 않음',()=>{const input=blank();input.settings=[{id:'main',rememberKey:true,colorMode:'dark'}];const {data}=prepareBackupImport(input,blank(),'replace',now);expect(data.settings[0].rememberKey).toBe(false);});
+ it('같은 관계 중복 백업도 정확히 한 번만 추가',()=>{const incoming=blank();incoming.channels=[channel('a'),channel('b')];incoming.owners=[owner('a',true),owner('a',false)];incoming.competitors=[comp('a','b'),comp('a','b')];const {data,report}=prepareBackupImport(incoming,blank(),'merge',now);expect(data.owners).toHaveLength(1);expect(data.competitors).toHaveLength(1);expect(report.ownersAdded).toBe(1);expect(report.competitorsAdded).toBe(1);});
+});

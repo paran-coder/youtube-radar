@@ -2,6 +2,7 @@ import Dexie,{type Table} from 'dexie';
 import { z } from 'zod';
 import type { Channel, Video, Snapshot, Owner, Competitor, CompetitorRole, AppSettings, Backup } from './types';
 import { expired } from './utils';
+import { prepareBackupImport } from './backupIntegrity';
 class RadarDatabase extends Dexie {
  channels!:Table<Channel,string>; videos!:Table<Video,string>; snapshots!:Table<Snapshot,string>;
  owners!:Table<Owner,string>; competitors!:Table<Competitor,string>; settings!:Table<AppSettings,string>;
@@ -78,30 +79,29 @@ const ChannelSchema=z.object({id:z.string().min(1),title:z.string(),description:
 const VideoSchema=z.object({id:z.string().min(1),channelId:z.string().min(1),title:z.string(),description:z.string(),thumbnail:z.string(),publishedAt:z.string(),durationSeconds:z.number(),categoryId:z.string(),viewCount:z.number().nullable(),likeCount:z.number().nullable(),commentCount:z.number().nullable(),kindOverride:z.enum(['long','short']).optional(),fetchedAt:z.string()}).strip();
 const BackupSchema=z.object({app:z.literal('youtube-radar'),schemaVersion:z.literal('1.0.0'),exportedAt:z.string(),data:z.object({channels:z.array(ChannelSchema).max(20000),videos:z.array(VideoSchema).max(500000),snapshots:z.array(z.object({id:z.string(),videoId:z.string(),collectedAt:z.string(),viewCount:z.number().nullable()}).strip()).max(1000000),owners:z.array(z.object({channelId:z.string(),addedAt:z.string(),isPrimary:z.boolean()}).strip()),competitors:z.array(z.object({id:z.string(),ownerId:z.string(),channelId:z.string(),addedAt:z.string(),role:z.enum(['direct','benchmark','inspiration']).optional()}).strip()),settings:z.array(z.object({id:z.string(),rememberKey:z.boolean().optional(),colorMode:z.enum(['light','dark']).optional()}).strip())}).strict()}).strict();
 export async function importBackup(value:unknown,mode:'merge'|'replace'){
- const parsed=BackupSchema.parse(value);const d=parsed.data;
- await db.transaction('rw',[db.channels,db.videos,db.snapshots,db.owners,db.competitors,db.settings],async()=>{
-  if(mode==='replace') {await Promise.all([db.channels.clear(),db.videos.clear(),db.snapshots.clear(),db.owners.clear(),db.competitors.clear(),db.settings.clear()]);}
-  const ch=d.channels.filter(x=>!expired(x.fetchedAt));const vids=d.videos.filter(x=>!expired(x.fetchedAt));const snaps=d.snapshots.filter(x=>!expired(x.collectedAt));
-  if(mode==='merge'){const olds=await db.channels.bulkGet(ch.map(c=>c.id));const keep=ch.filter((x,i)=>!olds[i]||Date.parse(x.fetchedAt)>=Date.parse(olds[i]!.fetchedAt));
-   if(keep.length)await db.channels.bulkPut(keep);const oldvs=await db.videos.bulkGet(vids.map(v=>v.id));const keepvs=vids.filter((v,i)=>!oldvs[i]||Date.parse(v.fetchedAt)>=Date.parse(oldvs[i]!.fetchedAt));if(keepvs.length)await db.videos.bulkPut(keepvs);
-  }else {if(ch.length)await db.channels.bulkPut(ch);if(vids.length)await db.videos.bulkPut(vids);}
-  if(snaps.length)await db.snapshots.bulkPut(snaps);
-  if(d.owners.length){
-   if(mode==='merge'){
-    // Keep existing owner registrations and their primary choice. Only add new IDs.
-    const existing=await db.owners.toArray();
-    const existingIds=new Set(existing.map(o=>o.channelId));
-    const imported=d.owners.filter(o=>!existingIds.has(o.channelId));
-    const firstIncomingPrimary=imported.find(o=>o.isPrimary)?.channelId;
-    const keepImportedPrimary=!existing.some(o=>o.isPrimary);
-    if(imported.length)await db.owners.bulkPut(imported.map(o=>({...o,isPrimary:keepImportedPrimary && o.channelId===firstIncomingPrimary})));
-   }else{
-    await db.owners.bulkPut(d.owners);
-   }
-  }
-  if(d.competitors.length)await db.competitors.bulkPut(d.competitors);
-  if(d.settings.length)await db.settings.bulkPut(d.settings.map(s=>({...s,rememberKey:false})));
+ const parsed=BackupSchema.parse(value);
+ return db.transaction('rw',[db.channels,db.videos,db.snapshots,db.owners,db.competitors,db.settings],async()=>{
+  // Read and plan inside the same transaction, then write all tables atomically.
+  const current={
+   channels:await db.channels.toArray(),videos:await db.videos.toArray(),
+   snapshots:await db.snapshots.toArray(),owners:await db.owners.toArray(),
+   competitors:await db.competitors.toArray(),settings:await db.settings.toArray(),
+  };
+  const {data,report}=prepareBackupImport(parsed.data,current,mode);
+  await db.channels.clear();await db.videos.clear();await db.snapshots.clear();
+  await db.owners.clear();await db.competitors.clear();await db.settings.clear();
+  if(data.channels.length)await db.channels.bulkPut(data.channels);
+  if(data.videos.length)await db.videos.bulkPut(data.videos);
+  if(data.snapshots.length)await db.snapshots.bulkPut(data.snapshots);
+  if(data.owners.length)await db.owners.bulkPut(data.owners);
+  if(data.competitors.length)await db.competitors.bulkPut(data.competitors);
+  if(data.settings.length)await db.settings.bulkPut(data.settings);
+  return report;
  });
- return {channels:d.channels.length,videos:d.videos.length,expired:d.channels.filter(x=>expired(x.fetchedAt)).length+d.videos.filter(x=>expired(x.fetchedAt)).length};
 }
-export async function resetAll(){await Promise.all([db.channels.clear(),db.videos.clear(),db.snapshots.clear(),db.owners.clear(),db.competitors.clear(),db.settings.clear()]);}
+export async function resetAll(){
+ await db.transaction('rw',[db.channels,db.videos,db.snapshots,db.owners,db.competitors,db.settings],async()=>{
+  await db.channels.clear();await db.videos.clear();await db.snapshots.clear();
+  await db.owners.clear();await db.competitors.clear();await db.settings.clear();
+ });
+}

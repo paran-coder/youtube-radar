@@ -482,3 +482,27 @@ input::placeholder {color:#8b8588;}
 .dashboard-ranking-footnote {font-size:12px;line-height:1.55;color:var(--yr-muted);margin-top:14px}
 @media(max-width:760px){.dashboard-ranking-toolbar {align-items:stretch;gap:14px}.dashboard-ranking-period,.dashboard-ranking-period select {width:100%}.dashboard-ranking-scopes button {font-size:13px;padding:8px 13px}.dashboard-ranking-modes button {font-size:13px}}
 .top-video-fetched {display:block;margin-top:6px;font-size:12px;color:var(--yr-muted)}
+
+
+/* v1.6.1 — supplied logo assets & first-visit dashboard onboarding */
+.brand-logo { background:transparent; border-radius:0; overflow:visible; }
+.brand-logo img {display:block;width:40px;height:40px;object-fit:contain;}
+.brand-profile {background:transparent;border:0;overflow:hidden;}
+.brand-profile img {display:block;width:30px;height:30px;object-fit:contain;}
+.dashboard-intro {margin-bottom:30px;}
+.dashboard-intro-bar {min-height:52px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:7px 15px;border-radius:12px;border:1px solid #e7dcd4;background:#fbf6ef;color:var(--yr-ink);}
+.dashboard-intro.is-open .dashboard-intro-bar {border-color:transparent;background:transparent;padding:0 2px 10px;min-height:42px;}
+.dashboard-intro-summary {display:flex;align-items:center;gap:10px;min-width:0;color:#61545f;font-size:13px;font-weight:650;line-height:1.45;}
+.dashboard-intro-summary svg {color:var(--yr-brand);flex-shrink:0;}
+.dashboard-intro-toggle {display:inline-flex;justify-content:center;align-items:center;gap:7px;white-space:nowrap;min-height:40px;padding:7px 12px;border-radius:9px;border:1px solid #dbcada;background:#fff;color:var(--yr-brand);font-size:13px;font-weight:700;cursor:pointer;}
+.dashboard-intro-toggle:hover {background:var(--yr-brand-soft);border-color:var(--yr-brand-line);}
+.dashboard-intro-toggle .intro-chevron-up {transform:rotate(180deg);}
+.dashboard-intro #dashboard-intro-panel[hidden] {display:none;}
+.dashboard-intro .hero {margin:0;}
+.dashboard-intro .hero-actions .btn-ghost {border:1px solid #d5c7d6;}
+@media(max-width:760px){
+  .dashboard-intro {margin-bottom:23px;}
+  .dashboard-intro-bar {padding:7px 10px;gap:8px;}
+  .dashboard-intro-summary {font-size:12px;}
+  .dashboard-intro-toggle {font-size:12px;padding:7px 10px;}
+}

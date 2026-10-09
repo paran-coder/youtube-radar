@@ -1,5 +1,5 @@
 /* Offline static shell only. YouTube API requests and credentials are never cached. */
-const CACHE='youtube-radar-static-v1.5.0';
+const CACHE='youtube-radar-static-v1.6.1';
 self.addEventListener('install',event=>{
  event.waitUntil((async()=>{
   const cache=await caches.open(CACHE);
@@ -16,7 +16,7 @@ self.addEventListener('fetch',event=>{
  if(req.mode==='navigate'){
   event.respondWith(fetch(req).then(r=>{if(r.ok){const clone=r.clone();void caches.open(CACHE).then(c=>c.put('/',clone));}return r;}).catch(async()=>await (await caches.open(CACHE)).match('/')||new Response('Offline cache unavailable',{status:503})));return;
  }
- if(url.pathname.startsWith('/assets/')||url.pathname.endsWith('/favicon.svg')){
+ if(url.pathname.startsWith('/assets/')||['/favicon.svg','/favicon.png','/apple-touch-icon.png','/logo.png'].includes(url.pathname)){
   event.respondWith((async()=>{const cache=await caches.open(CACHE);const cached=await cache.match(req);if(cached)return cached;const response=await fetch(req);if(response.ok)void cache.put(req,response.clone());return response;})());
  }
 });

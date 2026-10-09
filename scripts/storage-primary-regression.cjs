@@ -27,8 +27,16 @@ const validator=new Proxy({parse:x=>x},{get(target,key){if(key in target)return 
 const z=new Proxy({}, {get(){return (...args)=>validator;}});
 const input=fs.readFileSync(path.join(__dirname,'../src/lib/storage.ts'),'utf8');
 const compiled=ts.transpileModule(input,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,esModuleInterop:true}}).outputText;
+const backupTs=fs.readFileSync(path.join(__dirname,'../src/lib/backupIntegrity.ts'),'utf8');
+const backupJs=ts.transpileModule(backupTs,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+const backupMod={exports:{}};
+vm.runInNewContext(backupJs,{module:backupMod,exports:backupMod.exports,require:name=>{
+ if(name==='./utils')return {expired:()=>false};
+ throw Error('Unexpected import in backupIntegrity '+name);
+},Date,Set,Map,Number});
 const mod={exports:{}};
 vm.runInNewContext(compiled,{module:mod,exports:mod.exports,require:name=>{
+ if(name==='./backupIntegrity')return backupMod.exports;
  if(name==='dexie')return {__esModule:true,default:FakeDexie};
  if(name==='zod')return {z};
  if(name==='./utils')return {expired:()=>false};
