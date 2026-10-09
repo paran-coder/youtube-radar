@@ -1,6 +1,6 @@
 {
   "name": "youtube-radar",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,7 +11,8 @@
     "test:watch": "vitest",
     "smoke": "node scripts/smoke-test.cjs",
     "qa:primary": "node scripts/storage-primary-regression.cjs",
-    "qa:delete": "node scripts/storage-deletion-regression.cjs"
+    "qa:delete": "node scripts/storage-deletion-regression.cjs",
+    "qa:dashboard": "node scripts/dashboard-ranking-regression.cjs"
   },
   "dependencies": {
     "dexie": "^4.2.0",

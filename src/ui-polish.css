@@ -454,3 +454,31 @@ input::placeholder {color:#8b8588;}
 .compact-channel .discover-saved-actions .discover-purge-mini{background:#fff8f6;color:#943827;border:1px solid #efd2ca}
 @media(max-width:980px){.discover-linked-row{flex-wrap:wrap}.discover-linked-detail{flex-basis:calc(100% - 65px)}.discover-linked-row select{flex:1}.discover-purge{margin-left:auto}}
 @media(max-width:640px){.discover-linked-row select{width:100%;max-width:none}.discover-unlink-text,.discover-purge{flex:1}.discover-purge{margin:0}.discover-saved-actions{margin-left:auto}}
+
+/* v1.5.0: dashboard ranking filters use the restrained brand system and explicit hierarchy. */
+.dashboard-ranking-toolbar {display:flex;align-items:end;gap:18px;justify-content:space-between;flex-wrap:wrap;padding-bottom:17px;border-bottom:1px solid var(--yr-hairline)}
+.dashboard-ranking-scopes {display:flex;flex-wrap:wrap;gap:6px;min-width:0;border:0;padding:0;margin:0}
+.dashboard-ranking-scopes legend,.dashboard-ranking-period {font-size:13px;color:var(--yr-muted);font-weight:650;margin-bottom:8px}
+.dashboard-ranking-scopes button {border:1px solid var(--yr-hairline);background:#fff;border-radius:999px;padding:10px 17px;min-height:42px;color:var(--yr-ink);font-weight:680;font-size:14px;cursor:pointer}
+.dashboard-ranking-scopes button:hover,.dashboard-ranking-scopes button.selected {background:var(--yr-brand-soft);border-color:var(--yr-brand-line);color:var(--yr-brand)}
+.dashboard-ranking-period {display:flex;flex-direction:column;gap:6px;margin:0;min-width:156px}
+.dashboard-ranking-period select {min-width:156px}
+.dashboard-ranking-subbar {display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:18px;flex-wrap:wrap}
+.dashboard-ranking-modes {display:flex;gap:6px;align-items:center}
+.dashboard-ranking-modes button {border:0;background:transparent;border-bottom:2px solid transparent;color:var(--yr-muted);font-weight:680;padding:10px 13px;min-height:42px;font-size:14px;cursor:pointer}
+.dashboard-ranking-modes button.active {color:var(--yr-brand);border-bottom-color:var(--yr-brand)}
+.dashboard-ranking-modes button:hover {color:var(--yr-brand)}
+.dashboard-ranking-count {color:var(--yr-muted);font-size:13px}
+.dashboard-ranking-explanation {color:var(--yr-muted);font-size:13px;line-height:1.65;margin:10px 0 20px}
+.top-video-channel {font-size:12px;font-weight:750;color:var(--yr-brand);display:block;margin-bottom:5px;line-height:1.45;overflow-wrap:anywhere}
+.top-video-tags {display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:5px 0 11px}
+.top-video-tags time {font-size:12px;color:var(--yr-muted)}
+.top-video-metric {display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.top-video-metric b {font-size:18px;font-variant-numeric:tabular-nums;color:var(--yr-ink)}
+.top-video-metric small {color:var(--yr-muted);font-size:12px}
+.top-video-growth {display:flex;flex-direction:column;gap:3px;margin-top:9px;padding-top:10px;border-top:1px solid var(--yr-hairline)}
+.top-video-growth strong {font-size:13px;color:var(--yr-brand);font-variant-numeric:tabular-nums}
+.top-video-growth span {font-size:12px;line-height:1.5;color:var(--yr-muted)}
+.dashboard-ranking-footnote {font-size:12px;line-height:1.55;color:var(--yr-muted);margin-top:14px}
+@media(max-width:760px){.dashboard-ranking-toolbar {align-items:stretch;gap:14px}.dashboard-ranking-period,.dashboard-ranking-period select {width:100%}.dashboard-ranking-scopes button {font-size:13px;padding:8px 13px}.dashboard-ranking-modes button {font-size:13px}}
+.top-video-fetched {display:block;margin-top:6px;font-size:12px;color:var(--yr-muted)}

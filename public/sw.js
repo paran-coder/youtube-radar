@@ -1,5 +1,5 @@
 /* Offline static shell only. YouTube API requests and credentials are never cached. */
-const CACHE='youtube-radar-static-v1.4.0';
+const CACHE='youtube-radar-static-v1.5.0';
 self.addEventListener('install',event=>{
  event.waitUntil((async()=>{
   const cache=await caches.open(CACHE);
