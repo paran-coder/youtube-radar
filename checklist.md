@@ -1,4 +1,4 @@
-# YouTube Radar — Development Checklist (v1.0.0)
+# YouTube Radar — Development Checklist (v1.3.0)
 
 ## Phase 0: 착수 문서 및 설계
 - [x] context-notes.md, checklist.md, README.md, User manual.md 먼저 작성
@@ -134,3 +134,19 @@
 - [ ] Vercel 배포 및 정상 동작 확인
 
 자체 점검: 빌드 오류에 직접 관련된 한 줄만 수정하고 앱 데이터·UI 동작은 유지함. 자체 평가 8/10 (전체 빌드 미검증).
+
+
+## v1.3.0 build checklist
+- [x] Competitor relationship types, persistence, JSON compatible
+- [x] Recent-90-day comparison, counts, distribution and sampling cautions
+- [x] Distinct popular vs promising small channels vs topic gaps
+- [x] Title patterns and evidence-based strategy suggestions
+- [x] Global query defaults
+- [x] Source and regression tests; deploy archive
+
+
+### 자체 점검 및 평가
+- 로직·UI 결합: 8.5/10 — 분류, 검색, 비교, 전략 탭 연결.
+- 데이터 품질: 8/10 — 누적 조회수와 경과시간 한계, 표본 경고를 구분.
+- 회귀 검사: 8/10 — 별도 로직 8개, 기존 모의 API/유틸리티/구문 검사 통과. npm 네트워크 타임아웃으로 전체 Vite 빌드 및 브라우저 E2E 미수행.
+- 다음 단계: GitHub 반영 및 Vercel 빌드 → 실제 키 검색·저장·JSON 복원 테스트 → 오류 수정.

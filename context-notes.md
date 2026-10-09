@@ -1,6 +1,6 @@
-# YouTube Radar — Context Notes (v1.0.0)
+# YouTube Radar — Context Notes (v1.3.0)
 
-## 승인된 제품 목표
+## 초기 승인된 제품 목표 (변경 이력 아래 참조)
 한국어 중심 공개 YouTube 경쟁 채널 분석 웹서비스. 누구나 자신의 Google Cloud YouTube Data API 키를 사용하며, 서버 데이터 저장 또는 사용자 계정은 없다. 채널당 최초 최근 50개 영상을 수집한다. 사용자가 요청할 때만 갱신하며, 수집 자료는 브라우저 IndexedDB에 저장한다. 데이터는 JSON으로 가져오거나 내보낸다. GitHub의 정적 앱을 Vercel에 배포한다.
 
 ## 필수 기능
@@ -61,3 +61,14 @@ React 19 + TypeScript + Vite. Dexie (IndexedDB), Fetch API, Lucide, Recharts. Ve
 
 ## v1.2.1 긴급 패치
 Vercel `src/App.tsx(5,299) TS6133`: UI 개편 후 미사용 `Sparkles` 아이콘 import 제거. TypeScript `noUnusedLocals`를 유지하며 빌드 설정을 완화하지 않음.
+
+
+## v1.3.0 development kickoff (2026-10-09)
+Approved by user direction to stop repetitive review and implement. Scope: competition analysis redesigned without extra API keys, keep static browser-only architecture. Global search enabled; channel relationships are labels (direct competitor, benchmark, inspiration), compare with explicit sample sizes and time windows, avoid invented causal claims. Previous source: v1.2.1.
+
+
+## v1.3.0 구현 결과
+- `src/lib/competition.ts` 새 분석 엔진: 기간·유형 필터, 표본 통계, 표본 경고, 제목 패턴, 소형 채널 대표 영상, 공식 카테고리 차이, 템플릿 기반 제작안.
+- UI: 경쟁 채널 역할 직접 편집, 5개 탭, 모바일 및 reduced-motion CSS.
+- BYOK/IndexedDB/JSON 스키마 하위 호환, 글로벌 채널 검색, Vercel용 정적 캐시 버전 갱신.
+- 미구현: 이미지 자체의 자동 특징 분석, 댓글 감정, 경쟁 시장 전체 규모, 별도 AI API, YouTube Analytics 인증.

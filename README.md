@@ -1,6 +1,6 @@
-# YouTube Radar — youtube-radar-v1.1.2
+# YouTube Radar — youtube-radar-v1.3.0
 
-**사용자 개인 API 키 기반의 한국어 YouTube 경쟁 채널 분석 웹앱**. React + TypeScript + Vite 기반이며, 서버 API·로그인·중앙 데이터베이스가 없습니다. 분석 결과는 개인 브라우저의 IndexedDB에 보관하고 JSON으로 백업합니다.
+**사용자 개인 API 키 기반의 글로벌 YouTube 경쟁 채널 분석 웹앱**. React + TypeScript + Vite 기반이며, 서버 API·로그인·중앙 데이터베이스가 없습니다. 분석 결과는 개인 브라우저의 IndexedDB에 보관하고 JSON으로 백업합니다.
 
 > v1.0.2: Vercel TypeScript 오류 TS2349 (2곳), TS2554 (1곳)를 수정했습니다. 이 환경에서는 npm DNS 실패로 전체 의존성 빌드를 재검증하지 못했습니다.
 
@@ -158,3 +158,20 @@ vercel.json                      # Vercel SPA 재작성 및 보안 헤더
 - `DESIGN.md`에 유지관리 가능한 디자인 기준 기록.
 
 > v1.2.1: Vercel TS6133 오류 해결을 위해 사용되지 않는 `Sparkles` import를 제거했습니다.
+
+
+## v1.3.0 in development
+Global discovery and evidence-based competitive strategy features; no external AI calls or server-side storage. Build validation pending.
+
+
+## v1.3.0 경쟁 분석 개편
+
+- 경쟁 채널 추가 시 `직접 경쟁` / `성과 벤치마크` / `콘텐츠 참고` 역할을 지정합니다. 기존 데이터는 `직접 경쟁`으로 취급하고 비교 화면에서 수정할 수 있습니다. 역할은 IndexedDB와 JSON에 보존됩니다. JSON `schemaVersion`은 하위 호환을 위해 `1.0.0`으로 유지하며 `competitors[].role`만 선택 필드로 추가했습니다.
+- 비교의 기본 업로드 기간은 최근 90일입니다. 30/90/180일·전체 수집, 롱폼/쇼츠/미분류를 선택합니다. 표본 부족, 편중된 성과, 시점 차이를 알립니다.
+- 콘텐츠 경쟁 인사이트는 인기 영상(누적 조회수), 숨은 강자(구독자 5만 이하, 채널별 대표 영상), 제목 패턴, 공식 카테고리 차이, 내 대응 전략으로 구분됩니다.
+- 경쟁 전략 탭에서 사용자가 콘텐츠 주제를 입력하면 제목 실험안 3개와 텍스트 기반 썸네일 구성안 2개를 제안합니다. AI 영상/이미지 분석, 클릭률 추정, 자동 시장 수요 점수는 제공하지 않습니다.
+- 채널명 검색은 `regionCode=KR`와 `relevanceLanguage=ko`를 기본으로 붙이지 않아 전 세계 채널을 대상으로 합니다. 검색어 언어에 따라 검색 결과가 편향될 수 있습니다.
+
+### 검증 현황
+- 경쟁 분석 로직을 별도 TypeScript 모듈로 분리해 순수 로직 컴파일 및 8가지 실행 검증에 통과. 기존 스모크 검사 통과.
+- TypeScript/TSX 구문 검사·CSS 검사 통과. 외부 npm 패키지 설치가 시간 초과되어 Vite 프로덕션 번들·실제 브라우저 통합 검증은 **미완료**입니다. Vercel 배포 후 `npm run build`와 `npm test`가 통과해야 공개 안정 버전으로 판단할 수 있습니다.

@@ -12,7 +12,8 @@ export interface Video {
 }
 export interface Snapshot { id: string; videoId: string; collectedAt: string; viewCount: number | null; }
 export interface Owner { channelId: string; addedAt: string; isPrimary: boolean; }
-export interface Competitor { id: string; ownerId: string; channelId: string; addedAt: string; }
+export type CompetitorRole = 'direct' | 'benchmark' | 'inspiration';
+export interface Competitor { id: string; ownerId: string; channelId: string; addedAt: string; role?: CompetitorRole; }
 export interface AppSettings { id: string; rememberKey?: boolean; colorMode?: 'light' | 'dark'; }
 export interface Backup { app: 'youtube-radar'; schemaVersion: '1.0.0'; exportedAt: string; data: { channels: Channel[]; videos: Video[]; snapshots: Snapshot[]; owners: Owner[]; competitors: Competitor[]; settings: AppSettings[] } }
 export interface SearchCandidate { id: string; title: string; description: string; thumbnail: string; handle?: string; }

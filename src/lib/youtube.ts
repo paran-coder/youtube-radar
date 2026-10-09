@@ -40,7 +40,7 @@ export async function getChannelById(key:string,id:string,signal?:AbortSignal) {
  return getChannel(key,id,signal);
 }
 export async function searchChannels(key:string,query:string,max=10,signal?:AbortSignal):Promise<SearchCandidate[]>{
- const r=await apiGet<{items?:Array<{id?:{channelId?:string};snippet?:{title?:string;description?:string;channelId?:string;thumbnails?:{medium?:{url:string};default?:{url:string}}}}>}>(key,'search',{part:'snippet',type:'channel',q:query,regionCode:'KR',relevanceLanguage:'ko',maxResults:max},signal);
+ const r=await apiGet<{items?:Array<{id?:{channelId?:string};snippet?:{title?:string;description?:string;channelId?:string;thumbnails?:{medium?:{url:string};default?:{url:string}}}}>}>(key,'search',{part:'snippet',type:'channel',q:query,maxResults:max},signal);
  return (r.items||[]).map(x=>({id:x.id?.channelId||x.snippet?.channelId||'',title:x.snippet?.title||'채널',description:x.snippet?.description||'',thumbnail:x.snippet?.thumbnails?.medium?.url||x.snippet?.thumbnails?.default?.url||''})).filter(x=>!!x.id);
 }
 export async function fetchRecentVideos(key:string,channel:Channel,limit=50,signal?:AbortSignal):Promise<Video[]>{
