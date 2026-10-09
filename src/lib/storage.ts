@@ -20,13 +20,21 @@ export async function saveChannelData(channel:Channel,videos:Video[]){
   const overrides=new Map(prev.map(v=>[v.id,v.kindOverride]));
   const adjusted=videos.map(v=>({...v,kindOverride:overrides.get(v.id)}));
   if(adjusted.length) await db.videos.bulkPut(adjusted);
-  // Deleted/private uploads from earlier snapshots remain only while their data is valid.
+  // Keep the channel view aligned with the latest requested sample.
+  // Remove snapshots for videos outside that sample as well.
+  const freshIds=new Set(adjusted.map(v=>v.id));
+  const removedIds=prev.filter(v=>!freshIds.has(v.id)).map(v=>v.id);
+  if(removedIds.length){
+   await db.videos.bulkDelete(removedIds);
+   await db.snapshots.where('videoId').anyOf(removedIds).delete();
+  }
+  // Store new observations only for videos still in the sample.
   const when=new Date().toISOString();const snaps=adjusted.map(v=>({id:`${v.id}:${when}`,videoId:v.id,collectedAt:when,viewCount:v.viewCount}));
   if(snaps.length) await db.snapshots.bulkPut(snaps);
  });
  await purgeExpired();
 }
-export async function addOwner(channelId:string){const owners=await db.owners.toArray();await db.owners.put({channelId,addedAt:new Date().toISOString(),isPrimary:!owners.some(x=>x.isPrimary)});}
+export async function addOwner(channelId:string){await db.transaction('rw',db.owners,async()=>{const existing=await db.owners.get(channelId);if(existing)return;const owners=await db.owners.toArray();await db.owners.put({channelId,addedAt:new Date().toISOString(),isPrimary:!owners.some(x=>x.isPrimary)});});}
 export async function primaryOwner(channelId:string){await db.transaction('rw',db.owners,async()=>{await db.owners.toCollection().modify({isPrimary:false});await db.owners.update(channelId,{isPrimary:true});});}
 export async function removeOwner(channelId:string){await db.transaction('rw',db.owners,db.competitors,async()=>{const was=await db.owners.get(channelId);await db.owners.delete(channelId);await db.competitors.where('ownerId').equals(channelId).delete();if(was?.isPrimary){const next=(await db.owners.toArray()).sort((a,b)=>a.addedAt.localeCompare(b.addedAt))[0];if(next)await db.owners.update(next.channelId,{isPrimary:true});}});}
 export async function addCompetitor(ownerId:string,channelId:string){if(ownerId===channelId)throw new Error('자신을 경쟁 채널로 추가할 수 없습니다.');await db.competitors.put({id:`${ownerId}:${channelId}`,ownerId,channelId,addedAt:new Date().toISOString()});}

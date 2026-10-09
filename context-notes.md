@@ -26,3 +26,7 @@ React 19 + TypeScript + Vite. Dexie (IndexedDB), Fetch API, Lucide, Recharts. Ve
 
 ## 범위 제외
 로그인, 서버 DB, 자동 백그라운드 수집, AI 원인분석, 임의로 구성된 성공점수, 정확하지 않은 자동 Shorts 판별, OAuth 기반 Analytics, 전역 경쟁 순위.
+
+
+### 2026-10-09 후속 핸드오버
+수정 릴리스 1.0.1: 재수집 표본 정리, 중복 기준 채널 보존, 삭제 시 대표 자동 지정. npm 네트워크 연결 실패로 실제 번들 빌드 검증은 남았습니다. GitHub/Vercel 연동 계정은 확인되었으나 이 로컬 폴더는 Git 저장소가 아니고 원격에 업로드되지 않았습니다.
