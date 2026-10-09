@@ -1,4 +1,4 @@
-# YouTube Radar — youtube-radar-v1.0.2
+# YouTube Radar — youtube-radar-v1.1.0
 
 **사용자 개인 API 키 기반의 한국어 YouTube 경쟁 채널 분석 웹앱**. React + TypeScript + Vite 기반이며, 서버 API·로그인·중앙 데이터베이스가 없습니다. 분석 결과는 개인 브라우저의 IndexedDB에 보관하고 JSON으로 백업합니다.
 
@@ -120,3 +120,23 @@ vercel.json                      # Vercel SPA 재작성 및 보안 헤더
 - 대표 채널을 라이브러리에서 삭제하면 남은 기준 채널에서 새 대표를 지정합니다.
 - 소스 구문 및 모의 API 테스트 통과. 전체 `npm install && npm run build && npm test` 검증은 환경의 npm 레지스트리 연결 문제로 미완료입니다.
 - 실제 YouTube API 키 통합 테스트, Chromium E2E, GitHub 푸시·Vercel 배포는 미완료입니다.
+
+
+## v1.1.0: Google Cloud API 키 가이드
+- `/api-guide`에서 Google 계정 → 프로젝트 → YouTube Data API v3 → API 키 생성 → HTTP 리퍼러 + API 제한 → 앱 연결을 안내합니다.
+- 사용자가 제공한 Subtitle Localizer 안내 구조(목차, 번호 단계, 복사용 값, 오류 해결)를 재설계하되 OAuth 관련 단계는 포함하지 않습니다.
+- 설정 화면, 미연결 배너, 사이드바에 안내 링크를 제공합니다.
+- Google Cloud 보안 제한 설정은 자동 검증할 수 없어 체크리스트는 사용자 자기 확인입니다.
+
+### 가이드 페이지 배포 확인
+- `https://youtube-radar-six.vercel.app/api-guide` 경로로 열리는지 확인합니다.
+- 좌측 **API 키 발급 가이드**, 미연결 경고, 설정 화면의 안내 버튼으로 같은 페이지가 열립니다.
+- 보안 확인 2개는 설정 및 가이드에서 공유되는 사용자 직접 확인 기록이며 Google Cloud 콘솔을 자동 검증하지 않습니다.
+- npm 인터넷 연결 오류로 이 배포 파일에 대한 전체 Vite 빌드/실기 검증은 작성 환경에서 수행하지 못했습니다.
+
+
+## v1.1.1: API 키 진입점 정리
+- GitHub `main` 브랜치에 v1.0.2만 올라간 배포에는 가이드가 표시되지 않으므로 v1.1.1 전체 파일로 교체해야 합니다.
+- API 키 미연결 시 상단 중복 버튼을 제거했습니다. 첫 진입은 **API 키 발급 가이드**, 보조 진입은 **이미 키가 있어요**입니다.
+- 상태 표시를 **브라우저에 저장됨**으로 명확히 바꿨습니다. 이 표시를 눌러야 하는 버튼으로 안내하지 않습니다.
+- 모바일에서도 미연결 배너의 가이드 버튼이 우선 표시되며, `/api-guide`는 직접 접근할 수 있습니다.
