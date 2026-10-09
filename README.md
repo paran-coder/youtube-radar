@@ -156,3 +156,5 @@ vercel.json                      # Vercel SPA 재작성 및 보안 헤더
 - 분석 표, 카테고리, 경쟁 화면, 설정 및 API 발급 가이드의 글자 대비와 크기를 조정.
 - API/IndexedDB/JSON 기능은 그대로 유지. 배포 전에 `npm run build`, `npm test` 및 390px/1440px 브라우저 회귀 점검 필요.
 - `DESIGN.md`에 유지관리 가능한 디자인 기준 기록.
+
+> v1.2.1: Vercel TS6133 오류 해결을 위해 사용되지 않는 `Sparkles` import를 제거했습니다.

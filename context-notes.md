@@ -58,3 +58,6 @@ React 19 + TypeScript + Vite. Dexie (IndexedDB), Fetch API, Lucide, Recharts. Ve
 - 기능/데이터 계층은 변경하지 않는다. 컬러: 오버진 중심, 크림/화이트 서피스, 링크 블루, 의미색만 보조 사용.
 - 우선순위: 텍스트 위계(14px 이상 핵심 본문), 명확한 CTA, 비장식형 히어로, 편안한 테이블. 모든 버튼 모바일 터치 크기 확보.
 - API 키 가이드도 동일한 토큰으로 스타일 통합, CSS로 reduced motion 지원.
+
+## v1.2.1 긴급 패치
+Vercel `src/App.tsx(5,299) TS6133`: UI 개편 후 미사용 `Sparkles` 아이콘 import 제거. TypeScript `noUnusedLocals`를 유지하며 빌드 설정을 완화하지 않음.
