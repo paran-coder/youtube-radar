@@ -8,10 +8,20 @@ class RadarDatabase extends Dexie {
  constructor(){super('youtube-radar-local-v1');this.version(1).stores({channels:'id, fetchedAt',videos:'id, channelId, publishedAt, fetchedAt',snapshots:'id, videoId, collectedAt',owners:'channelId, isPrimary',competitors:'id, ownerId, channelId',settings:'id'});}
 }
 export const db=new RadarDatabase();
-export async function purgeExpired(){await db.transaction('rw',db.channels,db.videos,db.snapshots,async()=>{
+export async function purgeExpired(){await db.transaction('rw',[db.channels,db.videos,db.snapshots,db.owners],async()=>{
  const channels=await db.channels.toArray();const old=channels.filter(c=>expired(c.fetchedAt));if(old.length) await db.channels.bulkDelete(old.map(c=>c.id));
  const videos=await db.videos.toArray();const out=videos.filter(v=>expired(v.fetchedAt));if(out.length) await db.videos.bulkDelete(out.map(v=>v.id));
  const snaps=await db.snapshots.toArray();const oldSnap=snaps.filter(s=>expired(s.collectedAt));if(oldSnap.length)await db.snapshots.bulkDelete(oldSnap.map(s=>s.id));
+ // Older merged backups may leave multiple owners marked as primary. Fix the flags,
+ // but never delete owners, their competitor links, or any saved analysis data.
+ const owners=await db.owners.toArray();
+ if(owners.length){
+  const sorted=[...owners].sort((a,b)=>a.addedAt.localeCompare(b.addedAt)||a.channelId.localeCompare(b.channelId));
+  const primary=sorted.find(o=>o.isPrimary)||sorted[0];
+  if(owners.filter(o=>o.isPrimary).length!==1){
+   await db.owners.toCollection().modify(o=>{o.isPrimary=o.channelId===primary.channelId;});
+  }
+ }
  });}
 export async function saveChannelData(channel:Channel,videos:Video[]){
  await db.transaction('rw',db.channels,db.videos,db.snapshots,async()=>{
@@ -52,7 +62,21 @@ export async function importBackup(value:unknown,mode:'merge'|'replace'){
   if(mode==='merge'){const olds=await db.channels.bulkGet(ch.map(c=>c.id));const keep=ch.filter((x,i)=>!olds[i]||Date.parse(x.fetchedAt)>=Date.parse(olds[i]!.fetchedAt));
    if(keep.length)await db.channels.bulkPut(keep);const oldvs=await db.videos.bulkGet(vids.map(v=>v.id));const keepvs=vids.filter((v,i)=>!oldvs[i]||Date.parse(v.fetchedAt)>=Date.parse(oldvs[i]!.fetchedAt));if(keepvs.length)await db.videos.bulkPut(keepvs);
   }else {if(ch.length)await db.channels.bulkPut(ch);if(vids.length)await db.videos.bulkPut(vids);}
-  if(snaps.length)await db.snapshots.bulkPut(snaps);if(d.owners.length)await db.owners.bulkPut(d.owners);if(d.competitors.length)await db.competitors.bulkPut(d.competitors);
+  if(snaps.length)await db.snapshots.bulkPut(snaps);
+  if(d.owners.length){
+   if(mode==='merge'){
+    // Keep existing owner registrations and their primary choice. Only add new IDs.
+    const existing=await db.owners.toArray();
+    const existingIds=new Set(existing.map(o=>o.channelId));
+    const imported=d.owners.filter(o=>!existingIds.has(o.channelId));
+    const firstIncomingPrimary=imported.find(o=>o.isPrimary)?.channelId;
+    const keepImportedPrimary=!existing.some(o=>o.isPrimary);
+    if(imported.length)await db.owners.bulkPut(imported.map(o=>({...o,isPrimary:keepImportedPrimary && o.channelId===firstIncomingPrimary})));
+   }else{
+    await db.owners.bulkPut(d.owners);
+   }
+  }
+  if(d.competitors.length)await db.competitors.bulkPut(d.competitors);
   if(d.settings.length)await db.settings.bulkPut(d.settings.map(s=>({...s,rememberKey:false})));
  });
  return {channels:d.channels.length,videos:d.videos.length,expired:d.channels.filter(x=>expired(x.fetchedAt)).length+d.videos.filter(x=>expired(x.fetchedAt)).length};
