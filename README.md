@@ -1,4 +1,4 @@
-# YouTube Radar — youtube-radar-v1.3.0
+# YouTube Radar — youtube-radar-v1.3.1
 
 **사용자 개인 API 키 기반의 글로벌 YouTube 경쟁 채널 분석 웹앱**. React + TypeScript + Vite 기반이며, 서버 API·로그인·중앙 데이터베이스가 없습니다. 분석 결과는 개인 브라우저의 IndexedDB에 보관하고 JSON으로 백업합니다.
 
@@ -175,3 +175,11 @@ Global discovery and evidence-based competitive strategy features; no external A
 ### 검증 현황
 - 경쟁 분석 로직을 별도 TypeScript 모듈로 분리해 순수 로직 컴파일 및 8가지 실행 검증에 통과. 기존 스모크 검사 통과.
 - TypeScript/TSX 구문 검사·CSS 검사 통과. 외부 npm 패키지 설치가 시간 초과되어 Vite 프로덕션 번들·실제 브라우저 통합 검증은 **미완료**입니다. Vercel 배포 후 `npm run build`와 `npm test`가 통과해야 공개 안정 버전으로 판단할 수 있습니다.
+
+
+## v1.3.1 경쟁 채널 탐색 목록 수정
+- 기존 연결된 경쟁 채널을 별도 목록에서 표시합니다.
+- 여러 기준 채널이 있는 경우 화면에서 선택하여 각자의 경쟁 목록을 확인합니다.
+- 등록되지 않은 저장 채널과 이미 연결된 채널을 명확히 구분합니다.
+- 경쟁 관계만 해제할 수 있으며 원본 채널·영상 데이터는 보존합니다.
+- IndexedDB 저장소 구조 및 JSON 백업 스키마는 변경하지 않았습니다.

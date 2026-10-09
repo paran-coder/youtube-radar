@@ -423,3 +423,24 @@ input::placeholder {color:#8b8588;}
 .strategy-thumb-grid p{font-size:13px;line-height:1.7;margin:8px 0 0;color:var(--yr-muted,#696969)}
 @media(max-width:760px){.competition-context{align-items:stretch;flex-direction:column}.competition-context select{width:100%}.strategy-thumb-grid{grid-template-columns:1fr}.pattern-heading,.pattern-row{grid-template-columns:minmax(0,1.8fr) 85px 72px;gap:8px}.insights-tabs button{font-size:12px;padding:9px 10px}.suggestion-row{flex-wrap:wrap}.suggestion-row p{min-width:50%}}
 @media(prefers-reduced-motion:reduce){.competition-insights *,.competition-context *{animation:none!important;transition:none!important}}
+
+/* v1.3.1 – Previously linked competitors must remain visible in Discover. */
+.discover-owner-switch{display:flex;align-items:center;gap:14px;margin:0 0 18px;flex-wrap:wrap}
+.discover-owner-switch label{font-size:13px;font-weight:700;color:#504b52}
+.discover-owner-switch select{min-width:230px;max-width:100%;font-size:13px;min-height:42px}
+.discover-count{font-size:13px;font-weight:600;color:#6a536a;margin-left:6px}
+.discover-linked-list{display:flex;flex-direction:column;gap:0}
+.discover-linked-row{display:flex;align-items:center;gap:14px;padding:15px 0;border-bottom:1px solid #e6e6e6}
+.discover-linked-row:last-child{border-bottom:0}
+.discover-linked-detail{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px}
+.discover-linked-detail b{font-size:14px;font-weight:700;color:#1d1d1d;overflow-wrap:anywhere}
+.discover-linked-detail small{font-size:12px;color:#696969;line-height:1.5;overflow-wrap:anywhere}
+.discover-linked-row select{min-width:150px;max-width:210px;font-size:13px;min-height:42px}
+.discover-linked-row .btn{white-space:nowrap}
+.discover-unlink{flex-shrink:0;width:38px;height:38px;border:1px solid #e6e6e6;background:#fff;color:#696969;border-radius:9px;display:grid;place-items:center;cursor:pointer}
+.discover-unlink:hover{color:#a43232;border-color:#d4a0a0}
+.discover-unlink:focus-visible,.discover-linked-row select:focus-visible{outline:2px solid #4a154b;outline-offset:2px}
+.discover-empty{padding:12px 0 4px}
+.discover-empty p{font-size:14px;color:#1d1d1d;margin:0 0 8px;font-weight:600}
+.discover-empty small,.discover-available-empty{font-size:13px;line-height:1.65;color:#696969}
+@media(max-width:760px){.discover-linked-row{flex-wrap:wrap;gap:10px}.discover-linked-detail{flex-basis:calc(100% - 60px)}.discover-linked-row select{flex:1;min-width:150px}.discover-linked-row .btn{flex:1;min-width:110px}.discover-linked-row .discover-unlink{flex:0 0 38px}}

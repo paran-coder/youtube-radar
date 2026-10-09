@@ -1,4 +1,4 @@
-# YouTube Radar — Context Notes (v1.3.0)
+# YouTube Radar — Context Notes (v1.3.1)
 
 ## 초기 승인된 제품 목표 (변경 이력 아래 참조)
 한국어 중심 공개 YouTube 경쟁 채널 분석 웹서비스. 누구나 자신의 Google Cloud YouTube Data API 키를 사용하며, 서버 데이터 저장 또는 사용자 계정은 없다. 채널당 최초 최근 50개 영상을 수집한다. 사용자가 요청할 때만 갱신하며, 수집 자료는 브라우저 IndexedDB에 저장한다. 데이터는 JSON으로 가져오거나 내보낸다. GitHub의 정적 앱을 Vercel에 배포한다.
@@ -72,3 +72,11 @@ Approved by user direction to stop repetitive review and implement. Scope: compe
 - UI: 경쟁 채널 역할 직접 편집, 5개 탭, 모바일 및 reduced-motion CSS.
 - BYOK/IndexedDB/JSON 스키마 하위 호환, 글로벌 채널 검색, Vercel용 정적 캐시 버전 갱신.
 - 미구현: 이미지 자체의 자동 특징 분석, 댓글 감정, 경쟁 시장 전체 규모, 별도 AI API, YouTube Analytics 인증.
+
+
+## v1.3.1 경쟁 채널 탐색 목록 수정
+- 기존 연결된 경쟁 채널을 별도 목록에서 표시합니다.
+- 여러 기준 채널이 있는 경우 화면에서 선택하여 각자의 경쟁 목록을 확인합니다.
+- 등록되지 않은 저장 채널과 이미 연결된 채널을 명확히 구분합니다.
+- 경쟁 관계만 해제할 수 있으며 원본 채널·영상 데이터는 보존합니다.
+- IndexedDB 저장소 구조 및 JSON 백업 스키마는 변경하지 않았습니다.
