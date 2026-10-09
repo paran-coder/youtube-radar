@@ -6,6 +6,12 @@ const root=path.join(__dirname,'..');function recursive(dir){return fs.readdirSy
 const files=recursive(path.join(root,'src'));let errors=0;
 for(const file of files){const src=fs.readFileSync(file,'utf8');const parsed=ts.createSourceFile(file,src,ts.ScriptTarget.Latest,true,file.endsWith('tsx')?ts.ScriptKind.TSX:ts.ScriptKind.TS);if(parsed.parseDiagnostics.length){errors+=parsed.parseDiagnostics.length;for(const err of parsed.parseDiagnostics)console.error(file,ts.flattenDiagnosticMessageText(err.messageText,' '));}}
 if(errors)process.exitCode=1;else console.log(`PASS: TS/TSX syntax ${files.length} files`);
+const appSrc=fs.readFileSync(path.join(root,'src/App.tsx'),'utf8');
+const storageSrc=fs.readFileSync(path.join(root,'src/lib/storage.ts'),'utf8');
+// Regression tests for v1.0.2 Vercel TypeScript build failures.
+assert.equal(/run\(async\(\)\s*=>\s*\{[^\n]*?\}\)\(\)/.test(appSrc), false, 'Promise returned from run() must not be invoked');
+assert.ok(storageSrc.includes("db.transaction('rw',[db.channels,db.videos,db.snapshots,db.owners,db.competitors,db.settings],async()=>{"), 'Use an array of Dexie tables for multi-table transaction');
+console.log('PASS: Vercel build regression checks 2 assertions');
 const source=fs.readFileSync(path.join(root,'src/lib/utils.ts'),'utf8');const out=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;const fakeModule={exports:{}};vm.runInNewContext(out,{module:fakeModule,exports:fakeModule.exports,require,URL}, {filename:'utils.js'});
 const u=fakeModule.exports;assert.equal(u.parseDuration('PT1H2M3S'),3723);assert.equal(u.parseDuration('PT2M30S'),150);assert.equal(u.channelIdentifier('https://www.youtube.com/@google').handle,'@google');assert.equal(u.kindOf({durationSeconds:150}),'unknown');assert.equal(u.kindOf({durationSeconds:150,kindOverride:'short'}),'short');assert.equal(u.kindOf({durationSeconds:210}),'long');assert.equal(u.median([1,4,5]),4);assert.equal(u.prettyNumber(null),'비공개');assert.equal(u.expired('2026-09-01T00:00:00Z',Date.parse('2026-10-09T00:00:00Z')),true);
 console.log('PASS: pure utilities 9 assertions');

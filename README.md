@@ -1,6 +1,8 @@
-# YouTube Radar — youtube-radar-v1.0.0
+# YouTube Radar — youtube-radar-v1.0.2
 
 **사용자 개인 API 키 기반의 한국어 YouTube 경쟁 채널 분석 웹앱**. React + TypeScript + Vite 기반이며, 서버 API·로그인·중앙 데이터베이스가 없습니다. 분석 결과는 개인 브라우저의 IndexedDB에 보관하고 JSON으로 백업합니다.
+
+> v1.0.2: Vercel TypeScript 오류 TS2349 (2곳), TS2554 (1곳)를 수정했습니다. 이 환경에서는 npm DNS 실패로 전체 의존성 빌드를 재검증하지 못했습니다.
 
 > 개발 단계: 기능 구현 소스 및 단위 테스트 작성 완료. 현재 제작 환경은 npm 레지스트리 DNS 조회가 실패하여 의존성 설치, 실제 브라우저 E2E 및 프로덕션 번들 검증을 수행하지 못했습니다. 일반적인 인터넷 접근이 가능한 환경에서 아래 명령으로 빌드·검증해야 합니다. 실제 YouTube API 키 통합 검증도 필요합니다.
 
@@ -52,7 +54,7 @@ npm run smoke
 
 ## 배포 방법 (GitHub → Vercel)
 
-1. `youtube-radar-v1.0.0` 폴더의 소스 파일을 GitHub 저장소에 올립니다. **API 키, `.env`, 개인 JSON 백업 파일은 올리지 마세요.**
+1. `youtube-radar-v1.0.2` 폴더의 소스 파일을 GitHub 저장소에 올립니다. **API 키, `.env`, 개인 JSON 백업 파일은 올리지 마세요.**
 2. Vercel → Add New Project → 해당 GitHub 저장소를 선택합니다.
 3. Framework Preset: `Vite`, Build Command: `npm run build`, Output Directory: `dist`.
 4. 환경 변수로 API 키를 지정할 필요가 없습니다. 각 사용자가 브라우저에서 키를 입력합니다.

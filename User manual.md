@@ -1,4 +1,4 @@
-# YouTube Radar v1.0.0 — 사용자 매뉴얼
+# YouTube Radar v1.0.2 — 사용자 매뉴얼
 
 ## 1. 첫 접속: API 키 연결
 

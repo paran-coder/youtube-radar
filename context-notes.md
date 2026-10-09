@@ -30,3 +30,8 @@ React 19 + TypeScript + Vite. Dexie (IndexedDB), Fetch API, Lucide, Recharts. Ve
 
 ### 2026-10-09 후속 핸드오버
 수정 릴리스 1.0.1: 재수집 표본 정리, 중복 기준 채널 보존, 삭제 시 대표 자동 지정. npm 네트워크 연결 실패로 실제 번들 빌드 검증은 남았습니다. GitHub/Vercel 연동 계정은 확인되었으나 이 로컬 폴더는 Git 저장소가 아니고 원격에 업로드되지 않았습니다.
+
+## Vercel 빌드 오류 대응 (v1.0.2)
+- 사용자 로그: App.tsx(106,541), (107,396) TS2349; storage.ts(48,100) TS2554.
+- 대응: 비동기 실행기 run의 반환 Promise 이중호출 제거; Dexie 트랜잭션 테이블을 배열로 전달.
+- npm 레지스트리 DNS 실패로 프로덕션 빌드와 실제 Vercel 배포는 미검증.

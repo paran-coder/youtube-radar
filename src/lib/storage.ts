@@ -45,7 +45,7 @@ const VideoSchema=z.object({id:z.string().min(1),channelId:z.string().min(1),tit
 const BackupSchema=z.object({app:z.literal('youtube-radar'),schemaVersion:z.literal('1.0.0'),exportedAt:z.string(),data:z.object({channels:z.array(ChannelSchema).max(20000),videos:z.array(VideoSchema).max(500000),snapshots:z.array(z.object({id:z.string(),videoId:z.string(),collectedAt:z.string(),viewCount:z.number().nullable()}).strip()).max(1000000),owners:z.array(z.object({channelId:z.string(),addedAt:z.string(),isPrimary:z.boolean()}).strip()),competitors:z.array(z.object({id:z.string(),ownerId:z.string(),channelId:z.string(),addedAt:z.string()}).strip()),settings:z.array(z.object({id:z.string(),rememberKey:z.boolean().optional(),colorMode:z.enum(['light','dark']).optional()}).strip())}).strict()}).strict();
 export async function importBackup(value:unknown,mode:'merge'|'replace'){
  const parsed=BackupSchema.parse(value);const d=parsed.data;
- await db.transaction('rw',db.channels,db.videos,db.snapshots,db.owners,db.competitors,db.settings,async()=>{
+ await db.transaction('rw',[db.channels,db.videos,db.snapshots,db.owners,db.competitors,db.settings],async()=>{
   if(mode==='replace') {await Promise.all([db.channels.clear(),db.videos.clear(),db.snapshots.clear(),db.owners.clear(),db.competitors.clear(),db.settings.clear()]);}
   const ch=d.channels.filter(x=>!expired(x.fetchedAt));const vids=d.videos.filter(x=>!expired(x.fetchedAt));const snaps=d.snapshots.filter(x=>!expired(x.collectedAt));
   if(mode==='merge'){const olds=await db.channels.bulkGet(ch.map(c=>c.id));const keep=ch.filter((x,i)=>!olds[i]||Date.parse(x.fetchedAt)>=Date.parse(olds[i]!.fetchedAt));

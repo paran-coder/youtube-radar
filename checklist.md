@@ -69,3 +69,12 @@
 - [ ] 대상 GitHub 저장소 생성·파일 푸시·Vercel 연동 배포
 
 **종합 평가: 7/10.** 데이터 무결성 문제를 일부 수정했지만 실행 환경의 의존성 설치와 브라우저 검증 미완료로 정식 출시 판정은 보류합니다.
+
+## v1.0.2 Vercel TS 빌드 오류 수정 (2026-10-09)
+- [x] App.tsx:106,107 TS2349: run()이 반환하는 Promise를 함수로 다시 호출하는 2곳 수정
+- [x] storage.ts:48 TS2554: Dexie 6개 테이블 transaction 인자를 배열로 전달하도록 수정
+- [x] TS/TSX 구문, 순수 유틸리티, 모의 API, 오류 회귀 스모크 테스트 통과
+- [ ] npm install / npm run build / npm test 전체 재검증 (현재 환경의 npm registry DNS 실패: EAI_AGAIN)
+- [ ] Vercel 신규 배포의 READY 상태 및 실제 브라우저 테스트
+
+**자체 점검: 7/10.** 신고된 타입 오류 3곳을 제거했지만 실제 전체 타입체크·Vercel 빌드 성공을 보증하지 않음.
